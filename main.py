@@ -72,13 +72,12 @@ async def check_user_from_session(session_token: str, db: dp_dependency):
     session = db.query(models.models.Session).filter(models.models.Session.session_token == session_token).first()
     
     if not session:
-        raise HTTPException(status_code=401, detail="Not authorised")
+        raise HTTPException(status_code=401, detail="Not authorised login first")
     
     user = db.query(models.models.Users).filter(models.models.Users.id == session.user_id).first()
     
     if not user:
         raise HTTPException(status_code=401, detail="User not found for session")
-    print('passed from auth')
     return user
 
                       
@@ -120,8 +119,8 @@ async def login_user(loginData: LoginBase, db: dp_dependency):
     
     return {"message": "Login successful", "session_token": session_token}                       
 
-@app.post("/auth/logout")
-async def logout_user(session_token: str, db: dp_dependency):
+@app.delete("/auth/logout")
+async def logout_user( db: dp_dependency,session_token: str = Depends(oauth2_scheme)):
     session = db.query(models.models.Session).filter(models.models.Session.session_token == session_token).first()
 
     if not session:
@@ -136,7 +135,6 @@ async def logout_user(session_token: str, db: dp_dependency):
 @app.post("/create-form/")
 async def create_form(form: FormBase,db:dp_dependency, token: str = Depends(oauth2_scheme)):
     await check_user_from_session(token, db)
-    
     db_form = models.models.Form(title=form.title,description=form.description)
     
     db.add(db_form)
@@ -177,7 +175,7 @@ async def delete_form(form_id: int, db: dp_dependency, token: str = Depends(oaut
     return {"message": "Form and associated fields deleted successfully"}
 
 
-@app.get('/forms/')
+@app.get('/forms')
 async def getAllForms(db: dp_dependency, token: str = Depends(oauth2_scheme)):
     await check_user_from_session(token,db)
     result=db.query(models.models.Form).all()

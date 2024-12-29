@@ -11,7 +11,7 @@ load_dotenv()
 
 # print(URLTODB)
 #hardcoding
-URLTODB="postgresql://postgres:password@localhost:5432/AssignmentKraft"
+URLTODB="postgresql://AssignmentKraft_owner:w5EejPk0QbVO@ep-patient-tree-a5gl691c.us-east-2.aws.neon.tech/AssignmentKraft?sslmode=require"
 
 
 if URLTODB is None:
