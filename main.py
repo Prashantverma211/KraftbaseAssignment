@@ -2,10 +2,9 @@ from datetime import datetime, timezone
 from typing import List, Union,Annotated
 
 from fastapi.security import OAuth2PasswordBearer
-from checkingRoute import checkingRoute
 from pydantic import BaseModel
 import models.models
-from DB_Link.database import engine, Session_local
+from models.session import engine, Session_local
 from sqlalchemy.orm import Session
 import secrets
 
@@ -50,7 +49,6 @@ class ResponseToForm(BaseModel):
 class SubmitFormBase(BaseModel):
     responses:List[ResponseToForm]             
         
-app.include_router(checkingRoute.router)
 
 def get_db():
     db= Session_local()
